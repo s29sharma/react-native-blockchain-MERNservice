@@ -33,7 +33,7 @@ export default class Login extends Component {
             schema:[LoginSchema]
         });
 
-        realm.write(()=>{
+       realm.write(()=>{
             let user = realm.create('Login',{username:'sachin',password:'sachin'})
             //console.log(user);
         });
@@ -52,7 +52,8 @@ export default class Login extends Component {
             if(value.username === this.state.text && value.password === this.state.password) {
                 this.props.navigator.push({
                     component: Dashboard,
-                    title: 'Scene'
+                    title: 'Scene',
+                    navigationBarHidden:true
                 });
             }
 

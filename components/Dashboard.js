@@ -1,130 +1,152 @@
 import React,{Component} from 'react'
-import { View, Text, TextInput, TouchableOpacity,StyleSheet,KeyboardAvoidingView} from 'react-native';
-import Web3 from 'web3'
+import { Image,View,ScrollView, Text, TextInput,StyleSheet,KeyboardAvoidingView, TouchableOpacity} from 'react-native';
+import { Drawer } from 'native-base';
+import { Container,Item,Label,Form,Input, Header, Content,Footer,Right,Segment, FooterTab,Left,Body, Badge,Button,Icon} from 'native-base';
+import SideBar from './Sidebar'
+import Submission from './Submission'
+import FooterApp from './Footer'
+export default class Dashboard extends Component {
 
-let web3 = new Web3();
-
-web3.setProvider(new web3.providers.HttpProvider('https://rinkeby.infura.io/hKOkGZCgS9FRiX2rUetf'));
-
-const address= '0x975D0F4DCbB412AdD2f35ECa4A7205e43E9d0CB6';
-
-const abi = [{"constant":true,"inputs":[],"name":"getBalance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"manager","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"pickWinner","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"random","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"getPlayers","outputs":[{"name":"","type":"address[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"enter","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"players","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"}];
-
-
-let lottery = new web3.eth.contract(abi).at(address);
-
-export default class Dashboard extends Component{
     _handleBackPress() {
         this.props.navigator.pop();
     }
-        constructor(props){
-            super(props);
-            this.state ={
-                manager: null,
-                players: [],
-                balance: null,
-                value:'',
-                message:''
-            };
-        }
 
+    constructor(props) {
+        super(props);
+        this.state = {
+            manager: null,
+            players: null,
+            balance: null,
+            value: '',
+            message: ''
+        };
+    }
 
-    getBalance() {
-        web3.eth.getCoinbase((err, coinbase) => {
-            const manager = web3.isConnected();
-            const balance = web3.eth.getBalance("0x6BAcC201786190062f9bc92E1A2Ad95EdA4D4431", (err2, balance) => {
-                console.log('balance ' + balance);
-                console.log(manager);
+    _handleNextPress(nextRoute) {
+        this.props.navigator.push(nextRoute);
+    }
+
+    componentDidMount() {
+
+        fetch('http://localhost:8090/getbalance')
+            .then(balance => balance.json())
+            .then(res => {
                 this.setState({
-                    balance:balance,
-                    manager:manager
+                    balance: res
                 });
             });
-        });
+
+
+        fetch('http://localhost:8090/getManager')
+            .then(manager => manager.json())
+            .then(res => {
+                this.setState({
+                    manager: res
+                });
+            });
+
+        fetch('http://localhost:8090/getPlayers')
+            .then(players => players.json())
+            .then(res => {
+                this.setState({
+                    players:res
+                });
+            });
+
+
+
     }
 
-    getManager(){
-        const manager = web3.isConnected();
-        console.log(manager);
-        this.setState({
-            manager:manager
-        })
-    }
 
+    render() {
 
-
-
-       // const players =  lottery.getPlayers();
-        //const balance =  web3.eth.getBalance("0x975D0F4DCbB412AdD2f35ECa4A7205e43E9d0CB6");
-
-
-/*
-    onSubmit = async (event)=> {
-        event.preventDefault();
-
-        const accounts =  await web3.eth.getAccounts();
-        this.setState({message: 'Waiting for the payment to process...'});
-        await lottery.enter().send({
-            from:accounts[0],
-            value:web3.utils.toWei(this.state.value,'ether')
-        });
-
-        this.setState({message:'You have successfully entered the lottery'});
-    };
-
-    onClick =async(event)=>{
-        event.preventDefault();
-
-        const accounts = await web3.eth.getAccounts();
-
-        this.setState({message: "Waiting for the winner"});
-        await lottery.pickWinner().send({
-            from:accounts[0]
-        });
-
-        this.setState({message: 'A winner has been picked'});
-    };*/
-
-
-
-
-
-    render(){
-        return(
+        const nextRoute = {
+            component: Submission,
+            title: 'Submit',
+            navigationBarHidden:true
+        };
+        return (
             <View style={styles.container}>
-                <TouchableOpacity style={styles.miniContainer}
-                                  onPress={this._onForward}>
-                    <Text style={styles.buttonContainer}>Play Lottery</Text>
 
-                </TouchableOpacity>
-                </View>
+                <ScrollView style={styles.scroll}>
+
+                    <View style={{alignContent:'center',justifyContent: 'center', alignItems: 'center', marginBottom:30}}>
+                    {/*<Text style={styles.center}>Lottery</Text>*/}
+                    <Image resizeMode="contain" style={{width:150,height:150}} source={require('../images/looto.png')} />
+                    </View>
+
+                    <Form>
+                        <Item style={{marginBottom:20}} stackedLabel>
+                            <Label style={{color:'white'}}>Lottery Address</Label>
+                            <Input  disabled value={this.state.manager} style={{color:'white',marginLeft:10}}>
+                                <Icon name='information-circle' />
+                            </Input>
+                        </Item>
+
+                        <Item style={{marginBottom:20}} stackedLabel>
+                            <Label style={{color:'white'}}>Number of Players</Label>
+                            <Input  disabled value={this.state.players} style={{color:'white',marginLeft:10}}>
+                            </Input>
+                        </Item>
+
+                        <Item style={{marginBottom:20}} stackedLabel>
+                            <Label style={{color:'white'}}>Current Balance</Label>
+                            <Input  disabled value={this.state.balance}  style={{color:'white',marginLeft:10}}> Ether
+                            </Input>
+                        </Item>
+
+
+                        <TouchableOpacity style={styles.buttonContainer}
+                                          onPress={() => this._handleNextPress(nextRoute)}
+                        >
+                            <Text style={styles.buttonText}>Play</Text>
+
+                        </TouchableOpacity>
+
+
+                    </Form>
+
+                </ScrollView>
+
+                <FooterApp navigator={this.props.navigator}/>
+
+            </View>
         );
     }
 }
 
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
+        //justifyContent: 'center',
+        //alignItems: 'center',
+        backgroundColor: '#2c3e50',
     },
-    miniContainer:{
-        backgroundColor: '#2980b6',
-        paddingVertical: 15,
-        width:200,
-        height:200
+    center:{
+        padding:10,
+        textAlign:'center',
+        fontSize:30,
+        color:'white',
+        fontFamily:'arial',
+        marginBottom:30
+    },
+    footer:{
+
     },
     buttonContainer: {
-        backgroundColor: 'white',
+        marginTop:20,
+        backgroundColor: '#2980b6',
         paddingVertical: 15,
-        width:100,
-        height:100,
-        marginLeft:50,
-        marginRight:50,
-        marginBottom:50,
-        marginTop:50
-
+        paddingBottom:15
+    },
+    buttonText: {
+        color: '#fff',
+        textAlign: 'center',
+        fontWeight: '700'
+    },
+    text:{
+        padding:10,
+        color:'white',
+        marginRight:50
     }
 });

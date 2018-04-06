@@ -8,11 +8,12 @@
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest"
   },
+  "proxy": "http://localhost:8090",
   "dependencies": {
-    "node-libs-react-native": "github:abec/node-libs-react-native",
+    "native-base": "^2.4.1",
+    "node-libs-react-native": "^1.0.2",
     "react": "^16.3.0-alpha.1",
     "react-native": "0.54.4",
-    "react-native-material-design": "^0.3.7",
     "realm": "^2.3.3",
     "web3": "^0.20.5"
   },

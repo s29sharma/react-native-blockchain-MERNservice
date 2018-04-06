@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard'
+import FooterApp from "./components/Footer";
 
 
 
@@ -17,11 +18,14 @@ export default class App extends Component<Props> {
 
         return(
             <NavigatorIOS
+                ref='nav'
                 initialRoute={{
-                    component: Login,
+                    component: Dashboard,
+                    backgroundColor:"#2c3e50",
+                    navigationBarHidden:true,
                     title: 'Welcome',
-                    //passProps: {index: 1}
                 }}
+
                 style={{flex: 1}}
             />
         );
