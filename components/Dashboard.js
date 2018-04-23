@@ -1,8 +1,7 @@
 import React,{Component} from 'react'
-import { Image,View,ScrollView, Text, TextInput,StyleSheet,KeyboardAvoidingView, TouchableOpacity} from 'react-native';
+import { Image,View,ScrollView, Text,ImageBackground, TextInput,StyleSheet,KeyboardAvoidingView, TouchableOpacity} from 'react-native';
 import { Drawer } from 'native-base';
 import { Container,Item,Label,Form,Input, Header, Content,Footer,Right,Segment, FooterTab,Left,Body, Badge,Button,Icon} from 'native-base';
-import SideBar from './Sidebar'
 import Submission from './Submission'
 import FooterApp from './Footer'
 export default class Dashboard extends Component {
@@ -28,7 +27,7 @@ export default class Dashboard extends Component {
 
     componentDidMount() {
 
-        fetch('http://localhost:8090/getbalance')
+        fetch('http://localhost:8095/getbalance')
             .then(balance => balance.json())
             .then(res => {
                 this.setState({
@@ -37,7 +36,7 @@ export default class Dashboard extends Component {
             });
 
 
-        fetch('http://localhost:8090/getManager')
+        fetch('http://localhost:8095/getManager')
             .then(manager => manager.json())
             .then(res => {
                 this.setState({
@@ -45,7 +44,7 @@ export default class Dashboard extends Component {
                 });
             });
 
-        fetch('http://localhost:8090/getPlayers')
+        fetch('http://localhost:8095/getPlayers')
             .then(players => players.json())
             .then(res => {
                 this.setState({
@@ -67,12 +66,17 @@ export default class Dashboard extends Component {
         };
         return (
             <View style={styles.container}>
-
+                <ImageBackground
+                    source={require('../images/lottery2.png')}
+                    style={{ flex: 1,
+                        width: '100%',
+                        height: '100%',
+                    }}>
                 <ScrollView style={styles.scroll}>
 
                     <View style={{alignContent:'center',justifyContent: 'center', alignItems: 'center', marginBottom:30}}>
                     {/*<Text style={styles.center}>Lottery</Text>*/}
-                    <Image resizeMode="contain" style={{width:150,height:150}} source={require('../images/looto.png')} />
+                    <Image resizeMode="contain" style={{width:150,height:150,borderRadius:65}} source={require('../images/looto.png')} />
                     </View>
 
                     <Form>
@@ -108,8 +112,8 @@ export default class Dashboard extends Component {
 
                 </ScrollView>
 
-                <FooterApp navigator={this.props.navigator}/>
-
+                <FooterApp navigator={this.props.navigator} />
+                </ImageBackground>
             </View>
         );
     }
@@ -118,8 +122,6 @@ export default class Dashboard extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        //justifyContent: 'center',
-        //alignItems: 'center',
         backgroundColor: '#2c3e50',
     },
     center:{

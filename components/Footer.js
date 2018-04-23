@@ -5,6 +5,8 @@ import { Container,Item,Label,Form,Input, Header, Content,Footer,Right,Segment, 
 import SideBar from './Sidebar'
 import Submission from './Submission'
 import Dashboard from "./Dashboard";
+import Profile from './Profile'
+import Winner from "./WinnerPicker";
 
 export default class FooterApp extends Component{
 
@@ -68,12 +70,18 @@ export default class FooterApp extends Component{
             title:"Welcome",
             navigationBarHidden:true,
         };
-        const BalanceRoute ={
-
+        const WinnerRoute ={
+            component:Winner,
+            title:"Pick a winner",
+            navigationBarHidden:true,
         };
-        const ResultRoute ={
-
+        const ProfileRoute ={
+            component:Profile,
+            title:"Profile",
+            navigationBarHidden:true,
         };
+
+        console.log(this.state.username);
         return(
             <Footer style={styles.footer}>
                 <FooterTab>
@@ -90,18 +98,18 @@ export default class FooterApp extends Component{
                         <Text>Play</Text>
                     </Button>
                     <Button badge vertical active={this.state.calculator}
-                            onPress={() => this._handleNextPressforcalculator(BalanceRoute)}
+                            onPress={() => this._handleNextPressforcalculator(WinnerRoute)}
                     >
-                        <Badge><Text>3</Text></Badge>
+                        <Badge><Text>2</Text></Badge>
                         <Icon active name="calculator" />
-                        <Text>Balance</Text>
+                        <Text>Winner</Text>
                     </Button>
                     <Button badge vertical active={this.state.calender}
-                            onPress={() => this._handleNextPressforcalender(ResultRoute)}
+                            onPress={() => this._handleNextPressforcalender(ProfileRoute)}
                     >
                         <Badge><Text>1</Text></Badge>
-                        <Icon name="calendar" />
-                        <Text>Results</Text>
+                        <Icon name="settings" />
+                        <Text>Profile</Text>
                     </Button>
                 </FooterTab>
             </Footer>

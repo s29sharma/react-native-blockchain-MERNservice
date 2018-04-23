@@ -1,5 +1,5 @@
 import React,{Component} from 'react'
-import { KeyboardAvoidingView,View,Text,Image,TextInput, TouchableOpacity,StyleSheet,NavigatorIOS} from 'react-native';
+import { KeyboardAvoidingView,View,Text,Image,TextInput, TouchableOpacity,ImageBackground,StyleSheet,NavigatorIOS} from 'react-native';
 import Dashboard from './Dashboard'
 import PropTypes from 'prop-types';
 import Realm from 'realm'
@@ -17,7 +17,9 @@ export default class Login extends Component {
         this.state = {
             text: '',
             password: '',
-            loggedin: false
+            loggedin: false,
+            actualUsername:'',
+            actualPassword:''
 
         };
     }
@@ -35,7 +37,7 @@ export default class Login extends Component {
 
        realm.write(()=>{
             let user = realm.create('Login',{username:'sachin',password:'sachin'})
-            //console.log(user);
+            console.log(user);
         });
 
         //Realm.Sync.User.login('https://awesome-plastic-hat.us1a.cloud.realm.io','s29sharma@gmail.com','password')
@@ -50,10 +52,14 @@ export default class Login extends Component {
         for(let [key,value] of Object.entries(myuser)) {
             console.log(key,value);
             if(value.username === this.state.text && value.password === this.state.password) {
+                this.setState({
+                    actualUsername:this.state.text,
+                    actualPassword:this.state.password
+                });
                 this.props.navigator.push({
                     component: Dashboard,
                     title: 'Scene',
-                    navigationBarHidden:true
+                    navigationBarHidden:true,
                 });
             }
 
@@ -69,11 +75,17 @@ export default class Login extends Component {
         //const { navigate } = this.props.navigation;
         return (
             <KeyboardAvoidingView behavior="padding" style={styles.container}>
+                <ImageBackground
+                    source={require('../images/lottery2.png')}
+                    style={{ flex: 1,
+                        width: '100%',
+                        height: '100%',
+                    }}>
 
-                <View style={styles.loginContainer}>
-                    <Image resizeMode="contain" style={styles.logo} source={require('../images/looto.png')} />
+                {/*<View style={styles.loginContainer}>*/}
+                    {/*<Image resizeMode="contain" style={styles.logo} source={require('../images/looto.png')} />*/}
 
-                </View>
+                {/*</View>*/}
 
             <View style={styles.formContainer}>
 
@@ -103,12 +115,17 @@ export default class Login extends Component {
                 </TouchableOpacity>
 
             </View>
+                </ImageBackground>
             </KeyboardAvoidingView>
 
         );
     }
 }
         const styles = StyleSheet.create({
+
+            formContainer:{
+              marginTop:400
+            },
             container: {
                 padding: 20,
                 flex:1,
@@ -117,16 +134,16 @@ export default class Login extends Component {
                 backgroundColor: '#2c3e50'
             },
             input: {
-                width:375,
+                width:'100%',
                 height: 40,
                 backgroundColor: 'rgba(225,225,225,0.2)',
                 marginBottom: 10,
                 padding: 10,
-                color: '#fff'
+                color: '#fff',
             },
             buttonContainer: {
                 backgroundColor: '#2980b6',
-                paddingVertical: 15
+                paddingVertical: 15,
             },
             buttonText: {
                 color: '#fff',

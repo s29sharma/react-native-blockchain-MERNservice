@@ -1,42 +1,122 @@
 import React,{Component} from 'react';
-import { View,ScrollView, Text,Image, TextInput,StyleSheet,KeyboardAvoidingView, TouchableOpacity} from 'react-native';
+import { View,ScrollView,ImageBackground, Text,Image, TextInput,StyleSheet,KeyboardAvoidingView, TouchableOpacity,Button} from 'react-native';
 import FooterApp from "./Footer";
-import { Container,Item,Label,Form,Input, Header, Content,Footer,Right,Segment, FooterTab,Left,Body, Badge,Button,Icon} from 'native-base';
+import { Container,Item,Label,Form,Input, Header, Content,Footer,Right,Segment, FooterTab,Left,Body, Badge,Icon} from 'native-base';
 
 
 export default class Submission extends Component {
 
+    onSubmit= async(event)=>{
+        console.log(this.state.value);
+        event.preventDefault();
+        this.setState({
+            message: 'Waiting for the payment to process...'
+        });
+        fetch('http://localhost:8095/sendTransaction',{
+            method:'POST',
+            headers:{
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify({
+                value:this.state.value
+            }),
+
+        })
+            .then(message=>message.json())
+            .then(res=>{
+                this.setState({
+                    message:res
+                })
+            });
+};
+
     constructor(props){
-        super(props)
+        super(props);
+
+        this.state={
+            player:null,
+            balance:null,
+            value:'',
+            message:''
+        }
+    }
+
+    componentDidMount() {
+        fetch('http://localhost:8095/getManager')
+            .then(manager => manager.json())
+            .then(res => {
+                this.setState({
+                    player: res
+                });
+            });
+
+        fetch('http://localhost:8095/getbalance')
+            .then(balance => balance.json())
+            .then(res => {
+                this.setState({
+                    balance: res
+                });
+            });
+
+        fetch('http://localhost:8095/getPlayerBalance')
+            .then(manager => manager.json())
+            .then(res => {
+                this.setState({
+                    balance: res
+                });
+            });
+
     }
     render(){
         return(
             <View style={styles.container}>
+                <ImageBackground
+                    source={require('../images/lottery2.png')}
+                    style={{ flex: 1,
+                        width: '100%',
+                        height: '100%',
+                    }}>
                 <ScrollView style={styles.scroll}>
                     <View style={{alignContent:'center',justifyContent: 'center', alignItems: 'center', marginBottom:30}}>
-                        <Image resizeMode="contain" style={{width:150,height:150}} source={require('../images/looto.png')} />
+                        <Image resizeMode="contain" style={{width:150,height:150,borderRadius:65}} source={require('../images/looto.png')} />
                     </View>
 
 
-                    <Form>
+
+
+                        <Item style={{marginBottom:20}} stackedLabel>
+                            <Label style={{color:'white'}}>Bet Account:</Label>
+                            <Input disabled value = {this.state.player} style={{color:'white',marginLeft:10}}/>
+                        </Item>
+
+                        <Item style={{marginBottom:20}} stackedLabel>
+                            <Label style={{color:'white'}}>Account Balance:</Label>
+                            <Input disabled value = {this.state.balance} style={{color:'white',marginLeft:10}}/>
+                        </Item>
+
                         <Item style={{marginBottom:20}} stackedLabel>
                             <Label style={{color:'white'}}>Bet Amount (in ethers):</Label>
-                            <Input style={{color:'white',marginLeft:10}}/>
+                            <TextInput style={styles.input}
+                                       returnKeyType="go"
+                                       onChangeText={(value) => this.setState({value})}
+                                       value={this.state.value}
+                                       placeholderTextColor='rgba(225,225,225,0.7)'/>
                         </Item>
-                        <Item style={{marginBottom:20}} stackedLabel>
-                            <Label style={{color:'white'}}>Bet Reason:</Label>
-                            <Input style={{color:'white',marginLeft:10}}/>
-                        </Item>
-                        <TouchableOpacity style={styles.buttonContainer}
-                        >
-                            <Text style={styles.buttonText}>Enter Lottery</Text>
 
+                        <TouchableOpacity style={styles.buttonContainer}
+                                          onPress={this.onSubmit}>
+                            <Text style={styles.buttonText}>Enter</Text>
                         </TouchableOpacity>
-                    </Form>
+
+
+                        <Text style={{alignContent:'center',color:'white',marginLeft:10,marginTop:80}}>{this.state.message}</Text>
+
 
                 </ScrollView>
 
                 <FooterApp navigator={this.props.navigator}/>
+
+                </ImageBackground>
             </View>
 
 
@@ -79,7 +159,8 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#2c3e50',
+        backgroundColor: '#2c3e50'
+
     },
     buttonContainer: {
         marginTop:20,
@@ -91,5 +172,12 @@ const styles = StyleSheet.create({
         color: '#fff',
         textAlign: 'center',
         fontWeight: '700'
+    },
+    input: {
+        width:375,
+        height: 40,
+        marginBottom: 10,
+        padding: 10,
+        color: '#fff'
     }
 });
